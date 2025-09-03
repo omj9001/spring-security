@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: spring-security
+  datasource:
+    url: jdbc:mysql://localhost:3306/onion-db
+    username: onion-user
+    password: onion1!
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  # 템플릿 엔진 설정
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+  # 정적 리소스 설정
+  mvc:
+    static-path-pattern: /**
+    contentnegotiation:
+      media-types:
+        css: text/css
+        js: application/javascript
+      favor-parameter: true
+
+  # Spring Security 설정
+  security:
+    # 기본 사용자 설정 (개발 환경용)
+    user:
+      name: user
+      password: password
+
+jwt:
+  secret: 249de8b0-127f-4016-b06a-978dfe2000b4
+  expiration:
+    access: 3600000  # 1시간 (밀리초 단위)
+    refresh: 604800000  # 7일 (밀리초 단위)
+  issuer: spring-security-study
+
+
+# 서버 설정
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session:
+      tracking-modes: cookie
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    com.study.springsecurity: DEBUG
+
+# 정적 리소스 캐싱 설정
+resources:
+  cache:
+    period: 3600
+  static-locations: classpath:/static/
