@@ -4,7 +4,9 @@ package com.study.springsecurity.config;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,9 +15,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain restAPIFilterChain (HttpSecurity http) throws Exception {
+        http.securityMatcher("/api/**")
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/api/**").permitAll()
+        );
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
@@ -29,7 +44,7 @@ public class SecurityConfig {
         //메인 화면, 로그인 화면을 제외한 접근에 대해 권한 요구
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/","/login/**").permitAll()
+                        .requestMatchers("/","/login/**","/join").permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -49,7 +64,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(5);
     }
 
 }

@@ -1,12 +1,10 @@
 package com.study.springsecurity.user.controller;
 
-import com.study.springsecurity.user.entity.User;
 import com.study.springsecurity.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class UserController {
@@ -28,15 +26,5 @@ public class UserController {
     public String loginPage() {
         return "user/loginPage";
     }
-
-    @PostMapping("/login/loginProc")
-    public String loginProc(User user) {
-
-        logger.info("loginProc - start");
-        logger.info("user id : " + user.getId());
-
-        return "main";
-    }
-
 }
 
