@@ -20,7 +20,7 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String createUser(Users signupUser){
+    public Users createUser(Users signupUser) {
 
         Users users = new Users();
 
@@ -28,20 +28,24 @@ public class UserService implements UserDetailsService {
         users.setPassword(passwordEncoder.encode(signupUser.getPassword()));
         users.setEnabled(signupUser.getEnabled());
 
-        Users result = userRepository.save(users);
-
-        return result.getUsername();
+        return userRepository.save(users);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Users users = userRepository.findUserByUsername(username).orElse(null);
+        Users users = userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        if(users != null){
-            return new MyUserDetils(users);
-        }
+        return new MyUserDetils(users);
+    }
 
-        return null;
+    public Users modifyPassword(Users users) {
+        Users existingUser = userRepository.findUserByUsername(users.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("No user: " + users.getUsername()));
+
+        existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
+
+        return userRepository.save(existingUser);
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class UserAPIController {
@@ -24,22 +26,27 @@ public class UserAPIController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity joinUser(@RequestBody Users users){
+    public ResponseEntity<Users> joinUser(@RequestBody Users users){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         users.setPassword(encoder.encode(users.getPassword()));
 
-        userService.createUser(users);
+        Users newUser =  userService.createUser(users);
 
-        logger.info("user name : " + users.getUsername());
-        logger.info("user password : " + users.getPassword());
+        logger.info("user name : "     + newUser.getUsername());
+        logger.info("user password : " + newUser.getPassword());
 
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(newUser);
     }
 
     @GetMapping("/getUsers")
-    public ResponseEntity getUsers(){
+    public ResponseEntity<List<Users>> getUsers(){
         return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    @PutMapping("/modifyPassword")
+    public ResponseEntity<Users> modifyPassword(@RequestBody Users users){
+        return ResponseEntity.ok(userService.modifyPassword(users));
     }
 
 }
