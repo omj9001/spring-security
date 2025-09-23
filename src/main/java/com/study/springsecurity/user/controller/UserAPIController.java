@@ -27,16 +27,11 @@ public class UserAPIController {
 
     @PostMapping("/join")
     public ResponseEntity<Users> joinUser(@RequestBody Users users){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        users.setPassword(encoder.encode(users.getPassword()));
+        logger.info("user name : "     + users.getUsername());
+        logger.info("user password : " + users.getPassword());
 
-        Users newUser =  userService.createUser(users);
-
-        logger.info("user name : "     + newUser.getUsername());
-        logger.info("user password : " + newUser.getPassword());
-
-        return ResponseEntity.ok(newUser);
+        return ResponseEntity.ok(userService.createUser(users));
     }
 
     @GetMapping("/getUsers")
