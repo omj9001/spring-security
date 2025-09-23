@@ -6,7 +6,6 @@ import com.study.springsecurity.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +15,9 @@ import java.util.List;
 public class UserAPIController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAPIController.class);
-    private final UserRepository userRepository;
 
-    private UserService userService;
+    private final UserRepository userRepository;
+    private final UserService userService;
 
     public UserAPIController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
