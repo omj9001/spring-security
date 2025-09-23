@@ -31,21 +31,21 @@ public class MyUserDetils implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return users.getEnabled().equals("Y");
+        return users.getEnabled() == 1;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return users.getEnabled().equals("Y");
+        return users.getEnabled() == 1;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return users.getEnabled().equals("Y");
+        return users.getEnabled() == 1;
     }
 
     @Override
     public boolean isEnabled() {
-        return users.getEnabled().equals("Y");
+        return users.getEnabled() == 1;
     }
 }
