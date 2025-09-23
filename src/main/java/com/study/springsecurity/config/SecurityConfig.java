@@ -1,10 +1,12 @@
 package com.study.springsecurity.config;
 
 
+import com.study.springsecurity.user.service.UserService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -53,7 +55,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login/page")
                         .loginProcessingUrl("/login/loginProc") // 로그인 처리 URL 명시적 지정
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/login/userProfile", true)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll
@@ -63,8 +65,19 @@ public class SecurityConfig {
     }
 
     @Bean
+    public DaoAuthenticationProvider authenticationProvider(UserService userDetailsService) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        // 더 자세한 오류 메시지를 위해
+        authProvider.setHideUserNotFoundExceptions(false);
+        return authProvider;
+    }
+
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(5);
+        return new BCryptPasswordEncoder();
     }
 
 }
