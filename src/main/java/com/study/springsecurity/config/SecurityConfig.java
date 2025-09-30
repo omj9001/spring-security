@@ -1,16 +1,13 @@
 package com.study.springsecurity.config;
 
 
-import com.study.springsecurity.user.service.UserService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -40,7 +37,7 @@ public class SecurityConfig {
         //정적 리소스에 대한 접근을 허용함.
         http
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         );
 
         //메인 화면, 로그인 화면을 제외한 접근에 대해 권한 요구
@@ -58,22 +55,22 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/login/userProfile", true)
                         .permitAll()
                 )
-                .logout(LogoutConfigurer::permitAll
-                );
+        ;
+
+        http.logout(logout -> logout
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/login/page")
+                                .addLogoutHandler((request, response, authentication) -> {
+                                                        request.getSession().invalidate();
+                                })
+                                .logoutSuccessHandler(((request, response, authentication) -> {
+                                                        response.sendRedirect("/login/page");
+                                }))
+                                .deleteCookies("JSESSIONID")
+        );
 
         return http.build();
     }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider(UserService userDetailsService) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        // 더 자세한 오류 메시지를 위해
-        authProvider.setHideUserNotFoundExceptions(false);
-        return authProvider;
-    }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -65,8 +65,11 @@
         <span class="profile-value" th:text="${user.enabled == 1 ? '활성화' : '비활성화'}">상태</span>
     </div>
 
-    <a href="/static" class="btn">홈으로</a>
-    <a href="/logout" class="btn">로그아웃</a>
+    <a href="/" class="btn">홈으로</a>
+    <form action="/logout" method="post" style="display:inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="btn">로그아웃</button>
+    </form>
 </div>
 </body>
 </html>
